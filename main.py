@@ -3,6 +3,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode
 
 import time
+import os
 
 # Config
 config = configparser.ConfigParser()
@@ -44,8 +45,12 @@ def remove_kickout_msg(update, context):
 # birthday
 def happyBirthday(update, context):
     cur_time = time.localtime(time.time())
+    print(cur_time)
     if cur_time.tm_mon == config['BIRTHDAY']['month'] and cur_time.tm_day == config['BIRTHDAY']['day']:
         update.message.reply_text(config['BIRTHDAY']['reply'], reply_to_message_id=update.effective_message.message_id)
+    else:
+        update.message.reply_text(config['BIRTHDAY']['wrong_reply'], reply_to_message_id=update.effective_message.message_id)
+
 
 # context.args: chat_id, text, reply_id(optional)
 def send(update, context):
@@ -60,6 +65,7 @@ def send(update, context):
 
 
 def main():
+    os.environ['TZ'] = config['ENVIRON']['TZ']
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
