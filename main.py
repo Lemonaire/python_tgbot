@@ -80,9 +80,9 @@ def main():
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, kickout))
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member, remove_kickout_msg))
 
-    dp.add_handler(MessageHandler(Filters.regex(config['BIRTHDAY']['command']), happyBirthday))
-
     dp.add_handler(CommandHandler("send", send, pass_args = True))
+
+    dp.add_handler(MessageHandler(Filters.regex(config['BIRTHDAY']['command']), happyBirthday))
 
     # Start the Bot
     updater.start_polling()
