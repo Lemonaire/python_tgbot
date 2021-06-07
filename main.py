@@ -48,10 +48,8 @@ def happyBirthday(update, context):
     timezone = pytz.timezone(config['ENVIRON']['TZ'])
     cur_time = datetime.datetime.now(timezone)
     if cur_time.month == int(config['BIRTHDAY']['month']) and cur_time.day == int(config['BIRTHDAY']['day']):
-        print(1)
         update.message.reply_text(config['BIRTHDAY']['reply'], reply_to_message_id=update.effective_message.message_id)
     else:
-        print(2)
         update.message.reply_text(config['BIRTHDAY']['wrong_reply'], reply_to_message_id=update.effective_message.message_id)
 
 
