@@ -1,5 +1,6 @@
 import logging, configparser, traceback
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import ParseMode
 
 import time
 
@@ -46,6 +47,17 @@ def happyBirthday(update, context):
     if cur_time.tm_mon == config['BIRTHDAY']['month'] and cur_time.tm_day == config['BIRTHDAY']['day']:
         update.message.reply_text(config['BIRTHDAY']['reply'], reply_to_message_id=update.effective_message.message_id)
 
+# context.args: chat_id, text, reply_id(optional)
+def send(update, context):
+    if 2 == len(context.args):
+        context.bot.send_message(context.args[0], context.args[1], parse_mode = ParseMode.HTML)
+    elif 3 == len(context.args):
+        context.bot.send_message(context.args[0], context.args[1], reply_to_message_id = context.args[2], parse_mode = ParseMode.HTML)
+    else:
+        update.message.reply_text("usage: /send <chat_id> <text> <reply_id>(optional)")
+
+
+
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -62,6 +74,8 @@ def main():
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member, remove_kickout_msg))
 
     dp.add_handler(MessageHandler(Filters.regex(config['BIRTHDAY']['command']), happyBirthday))
+
+    dp.add_handler(CommandHandler("send", send, pass_args = True))
 
     # Start the Bot
     updater.start_polling()
