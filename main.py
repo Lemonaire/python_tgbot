@@ -10,6 +10,7 @@ import os
 config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')
 
+domain = ""
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -63,12 +64,22 @@ def send(update, context):
         else:
             update.message.reply_text("usage: /send <chat_id> <text> <reply_id>(optional)")
 
+def tryURI(update, context):
+    if authorize(update.message.from_user.id):
+        uri = context.args[0]
+        result = os.popen('curl -o /dev/null -s -w %%{http_code} %s%s/' % (domain, uri), mode='r').readlines()
+        update.message.reply_text(result[0], reply_to_message_id=update.effective_message.message_id)
+
+def setDomain(update, context):
+    if authorize(update.message.from_user.id):
+        domain = context.args[0]
+        update.message.reply_text("Domain has been set to be " + domain, reply_to_message_id=update.effective_message.message_id)
+
 def authorize(user_id):
     try:
         return config['AUTHORITY'][str(user_id)]
     except Exception as e:
         return False
-
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -85,6 +96,8 @@ def main():
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member, remove_kickout_msg))
 
     dp.add_handler(CommandHandler("send", send, pass_args = True))
+    dp.add_handler(CommandHandler("try", tryURI, pass_args = True))
+    dp.add_handler(CommandHandler("setDomain", setDomain, pass_args = True))
 
     dp.add_handler(MessageHandler(Filters.regex(config['BIRTHDAY']['command']), happyBirthday))
 
