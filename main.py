@@ -55,18 +55,19 @@ def happyBirthday(update, context):
 
 # context.args: chat_id, text, reply_id(optional)
 def send(update, context):
-    if 2 == len(context.args):
-        context.bot.send_message(context.args[0], context.args[1], parse_mode = ParseMode.HTML)
-    elif 3 == len(context.args):
-        context.bot.send_message(context.args[0], context.args[1], reply_to_message_id = context.args[2], parse_mode = ParseMode.HTML)
-    else:
-        update.message.reply_text("usage: /send <chat_id> <text> <reply_id>(optional)")
+    if authorize(update.message.from_user.id):
+        if 2 == len(context.args):
+            context.bot.send_message(context.args[0], context.args[1], parse_mode = ParseMode.HTML)
+        elif 3 == len(context.args):
+            context.bot.send_message(context.args[0], context.args[1], reply_to_message_id = context.args[2], parse_mode = ParseMode.HTML)
+        else:
+            update.message.reply_text("usage: /send <chat_id> <text> <reply_id>(optional)")
 
 def authorize(user_id):
     try:
         return config['AUTHORITY'][str(user_id)]
     except Exception as e:
-        return 0
+        return False
 
 
 def main():
