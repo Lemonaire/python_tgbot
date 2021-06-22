@@ -62,7 +62,11 @@ def send(update, context):
     else:
         update.message.reply_text("usage: /send <chat_id> <text> <reply_id>(optional)")
 
-
+def authorize(user_id):
+    try:
+        return config['AUTHORITY'][str(user_id)]
+    except Exception as e:
+        return 0
 
 
 def main():
